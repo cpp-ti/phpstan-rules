@@ -1,4 +1,5 @@
 includes:
     - strict-types.neon
     - disallow-table-name.neon
+    - test-namespace.neon
     - ../vendor/spaze/phpstan-disallowed-calls/extension.neon
