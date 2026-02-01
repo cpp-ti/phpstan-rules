@@ -1,9 +1,17 @@
-name: Release
+name: Create Release
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
 
 jobs:
   test:
@@ -28,7 +36,7 @@ jobs:
         run: vendor/bin/phpunit
 
   release:
-    name: Create Release
+    name: Create Tag and Release
     needs: test
     runs-on: ubuntu-latest
     permissions:
@@ -40,20 +48,56 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get tag name
-        id: tag
-        run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      - name: Get latest tag
+        id: latest_tag
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "Latest tag: $LATEST_TAG"
+
+      - name: Calculate new version
+        id: new_version
+        run: |
+          LATEST_TAG="${{ steps.latest_tag.outputs.tag }}"
+          VERSION="${LATEST_TAG#v}"
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+
+          case "${{ inputs.version_type }}" in
+            major)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+            minor)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+          esac
+
+          NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION"
+
+      - name: Create and push tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.new_version.outputs.version }}" -m "Release ${{ steps.new_version.outputs.version }}"
+          git push origin "${{ steps.new_version.outputs.version }}"
 
       - name: Generate changelog
         id: changelog
         run: |
-          # Get previous tag
-          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          PREVIOUS_TAG="${{ steps.latest_tag.outputs.tag }}"
 
-          if [ -z "$PREVIOUS_TAG" ]; then
+          if [ "$PREVIOUS_TAG" = "v0.0.0" ]; then
             echo "changelog=Initial release" >> $GITHUB_OUTPUT
           else
-            CHANGELOG=$(git log --pretty=format:"- %s" ${PREVIOUS_TAG}..HEAD)
+            CHANGELOG=$(git log --pretty=format:"- %s" ${PREVIOUS_TAG}..HEAD^)
             echo "changelog<<EOF" >> $GITHUB_OUTPUT
             echo "$CHANGELOG" >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
@@ -62,7 +106,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: Release ${{ steps.tag.outputs.tag }}
+          tag_name: ${{ steps.new_version.outputs.version }}
+          name: Release ${{ steps.new_version.outputs.version }}
           body: |
             ## Changes
 
@@ -71,8 +116,15 @@ jobs:
             ## Installation
 
             ```bash
-            composer require cppti/phpstan-rules:${{ steps.tag.outputs.tag }}
+            composer require cppti/phpstan-rules:${{ steps.new_version.outputs.version }}
             ```
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "### Release Created! :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Previous version:** ${{ steps.latest_tag.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **New version:** ${{ steps.new_version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
