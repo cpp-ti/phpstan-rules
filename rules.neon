@@ -1,0 +1,8 @@
+includes:
+    - vendor/spaze/phpstan-disallowed-calls/extension.neon
+
+services:
+    -
+        class: Cppti\PHPStanRules\Rules\StrictTypesDeclarationRule
+        tags:
+            - phpstan.rules.rule

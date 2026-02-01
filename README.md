@@ -1,0 +1,137 @@
+# PHPStan Custom Rules
+
+Custom PHPStan rules for code quality enforcement.
+
+## Development Setup
+
+This project uses Docker for development. You don't need PHP or Composer installed locally.
+
+### Prerequisites
+- Docker
+- Docker Compose
+
+### Quick Start
+
+1. Build the Docker image:
+```bash
+make build
+```
+
+2. Install dependencies:
+```bash
+make install
+```
+
+3. Run tests:
+```bash
+make test
+```
+
+### Available Commands
+
+- `make build` - Build Docker image
+- `make install` - Install composer dependencies
+- `make test` - Run PHPUnit tests
+- `make phpstan` - Run PHPStan on src directory
+- `make shell` - Access container shell
+- `make help` - Show all available commands
+
+## Installation
+
+```bash
+composer require --dev cppti/phpstan-rules
+```
+
+## Usage
+
+Add the rules to your `phpstan.neon` configuration:
+
+```neon
+includes:
+    - vendor/cppti/phpstan-rules/rules.neon
+```
+
+## Rules
+
+### StrictTypesDeclarationRule
+
+Ensures that all PHP files have `declare(strict_types=1);` at the beginning of the file.
+
+**Example violation:**
+
+```php
+<?php
+
+namespace App;
+
+class MyClass
+{
+    // Missing declare(strict_types=1)
+}
+```
+
+**Correct:**
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App;
+
+class MyClass
+{
+    // OK
+}
+```
+
+## Disallowed Calls
+
+Este pacote inclui o [spaze/phpstan-disallowed-calls](https://github.com/spaze/phpstan-disallowed-calls), que permite proibir o uso de funções, métodos, constantes e namespaces específicos.
+
+As regras de quais chamadas são proibidas devem ser configuradas no projeto que utiliza este pacote. Adicione no seu `phpstan.neon`:
+
+```neon
+includes:
+    - vendor/cppti/phpstan-rules/rules.neon
+
+parameters:
+    disallowedFunctionCalls:
+        -
+            function: 'dd()'
+            message: 'Use logger ao invés de dd()'
+        -
+            function: 'dump()'
+            message: 'Remova dump() antes do commit'
+        -
+            function: 'var_dump()'
+        -
+            function: 'print_r()'
+        -
+            function: 'exit()'
+        -
+            function: 'die()'
+
+    disallowedMethodCalls:
+        -
+            method: 'Illuminate\Support\Facades\Log::debug()'
+            message: 'Não use Log::debug() em produção'
+
+    disallowedStaticCalls:
+        -
+            method: 'SomeClass::deprecatedMethod()'
+            message: 'Método depreciado, use newMethod()'
+```
+
+### Tipos de restrições disponíveis
+
+| Parâmetro | Descrição |
+|-----------|-----------|
+| `disallowedFunctionCalls` | Funções globais (ex: `dd()`, `var_dump()`) |
+| `disallowedMethodCalls` | Métodos de instância |
+| `disallowedStaticCalls` | Chamadas estáticas |
+| `disallowedConstants` | Constantes |
+| `disallowedNamespaces` | Namespaces inteiros |
+| `disallowedSuperglobals` | Superglobais (ex: `$_GET`, `$_POST`) |
+
+Para mais opções e configurações avançadas, consulte a [documentação do spaze/phpstan-disallowed-calls](https://github.com/spaze/phpstan-disallowed-calls).
