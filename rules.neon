@@ -1,12 +1,4 @@
+# This file is kept for backwards compatibility
+# For selective rule inclusion, use the files in the rules/ directory
 includes:
-    - vendor/spaze/phpstan-disallowed-calls/extension.neon
-
-services:
-    -
-        class: Cppti\PHPStanRules\Rules\StrictTypesDeclarationRule
-        tags:
-            - phpstan.rules.rule
-    -
-        class: Cppti\PHPStanRules\Rules\DisallowTableNameInValidationRuleRule
-        tags:
-            - phpstan.rules.rule
+    - rules/all.neon

@@ -44,16 +44,42 @@ composer require --dev cppti/phpstan-rules
 
 ## Usage
 
-Add the rules to your `phpstan.neon` configuration:
+### Todas as regras
+
+Por padrão, todas as regras são carregadas automaticamente via auto-descoberta do PHPStan. Se preferir ser explícito:
 
 ```neon
 includes:
     - vendor/cppti/phpstan-rules/rules.neon
 ```
 
+### Regras específicas
+
+Para usar apenas algumas regras, inclua os arquivos individuais:
+
+```neon
+includes:
+    - vendor/cppti/phpstan-rules/rules/strict-types.neon
+    - vendor/cppti/phpstan-rules/rules/disallow-table-name.neon
+```
+
+### Arquivos disponíveis
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `rules.neon` | Todas as regras (compatibilidade) |
+| `rules/all.neon` | Todas as regras |
+| `rules/strict-types.neon` | Apenas StrictTypesDeclarationRule |
+| `rules/disallow-table-name.neon` | Apenas DisallowTableNameInValidationRuleRule |
+
 ## Rules
 
 ### StrictTypesDeclarationRule
+
+```neon
+includes:
+    - vendor/cppti/phpstan-rules/rules/strict-types.neon
+```
 
 Ensures that all PHP files have `declare(strict_types=1);` at the beginning of the file.
 
@@ -86,6 +112,11 @@ class MyClass
 ```
 
 ### DisallowTableNameInValidationRuleRule
+
+```neon
+includes:
+    - vendor/cppti/phpstan-rules/rules/disallow-table-name.neon
+```
 
 Proíbe o uso de nomes de tabelas como strings diretamente em `Rule::unique()` e `Rule::exists()`. Isso força os desenvolvedores a usar `Model::class`, evitando que nomes de tabelas fiquem espalhados pelo código.
 

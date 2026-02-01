@@ -1,0 +1,5 @@
+services:
+    -
+        class: Cppti\PHPStanRules\Rules\DisallowTableNameInValidationRuleRule
+        tags:
+            - phpstan.rules.rule

@@ -1,0 +1,5 @@
+services:
+    -
+        class: Cppti\PHPStanRules\Rules\StrictTypesDeclarationRule
+        tags:
+            - phpstan.rules.rule
