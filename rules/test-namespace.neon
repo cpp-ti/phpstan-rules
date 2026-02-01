@@ -1,0 +1,5 @@
+services:
+    -
+        class: Cppti\PHPStanRules\Rules\TestNamespaceRule
+        tags:
+            - phpstan.rules.rule

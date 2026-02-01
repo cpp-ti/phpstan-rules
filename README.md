@@ -71,6 +71,7 @@ includes:
 | `rules/all.neon` | Todas as regras |
 | `rules/strict-types.neon` | Apenas StrictTypesDeclarationRule |
 | `rules/disallow-table-name.neon` | Apenas DisallowTableNameInValidationRuleRule |
+| `rules/test-namespace.neon` | Apenas TestNamespaceRule |
 
 ## Rules
 
@@ -142,6 +143,47 @@ $rules = [
     'email' => Rule::unique(User::class),
     'category_id' => Rule::exists(Category::class),
 ];
+```
+
+### TestNamespaceRule
+
+```neon
+includes:
+    - vendor/cppti/phpstan-rules/rules/test-namespace.neon
+```
+
+Garante que classes de teste (arquivos terminados em `Test.php`) tenham um namespace começando com `Tests\`. Isso mantém a organização e padronização dos testes no projeto.
+
+**Example violation:**
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests; // Errado: não começa com "Tests\"
+
+use PHPUnit\Framework\TestCase;
+
+class ExampleTest extends TestCase
+{
+}
+```
+
+**Correct:**
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Unit; // Correto: começa com "Tests\"
+
+use PHPUnit\Framework\TestCase;
+
+class ExampleTest extends TestCase
+{
+}
 ```
 
 ## Disallowed Calls
