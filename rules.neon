@@ -6,3 +6,7 @@ services:
         class: Cppti\PHPStanRules\Rules\StrictTypesDeclarationRule
         tags:
             - phpstan.rules.rule
+    -
+        class: Cppti\PHPStanRules\Rules\DisallowTableNameInValidationRuleRule
+        tags:
+            - phpstan.rules.rule

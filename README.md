@@ -85,6 +85,34 @@ class MyClass
 }
 ```
 
+### DisallowTableNameInValidationRuleRule
+
+Proíbe o uso de nomes de tabelas como strings diretamente em `Rule::unique()` e `Rule::exists()`. Isso força os desenvolvedores a usar `Model::class`, evitando que nomes de tabelas fiquem espalhados pelo código.
+
+**Example violation:**
+
+```php
+use Illuminate\Validation\Rule;
+
+$rules = [
+    'email' => Rule::unique('users'),
+    'category_id' => Rule::exists('categories'),
+];
+```
+
+**Correct:**
+
+```php
+use App\Models\User;
+use App\Models\Category;
+use Illuminate\Validation\Rule;
+
+$rules = [
+    'email' => Rule::unique(User::class),
+    'category_id' => Rule::exists(Category::class),
+];
+```
+
 ## Disallowed Calls
 
 Este pacote inclui o [spaze/phpstan-disallowed-calls](https://github.com/spaze/phpstan-disallowed-calls), que permite proibir o uso de funções, métodos, constantes e namespaces específicos.
