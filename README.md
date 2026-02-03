@@ -72,6 +72,7 @@ includes:
 | `rules/strict-types.neon` | Apenas StrictTypesDeclarationRule |
 | `rules/disallow-table-name.neon` | Apenas DisallowTableNameInValidationRuleRule |
 | `rules/test-namespace.neon` | Apenas TestNamespaceRule |
+| `rules/disallowed.neon` | Apenas regras de chamadas proibidas (spaze/phpstan-disallowed-calls) |
 
 ## Rules
 
@@ -189,6 +190,13 @@ class ExampleTest extends TestCase
 ## Disallowed Calls
 
 Este pacote inclui o [spaze/phpstan-disallowed-calls](https://github.com/spaze/phpstan-disallowed-calls), que permite proibir o uso de funções, métodos, constantes e namespaces específicos.
+
+Para usar apenas esta funcionalidade sem as outras regras:
+
+```neon
+includes:
+    - vendor/cppti/phpstan-rules/rules/disallowed.neon
+```
 
 As regras de quais chamadas são proibidas devem ser configuradas no projeto que utiliza este pacote. Adicione no seu `phpstan.neon`:
 
