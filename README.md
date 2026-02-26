@@ -44,18 +44,18 @@ composer require --dev cppti/phpstan-rules
 
 ## Usage
 
-### Todas as regras
+### All rules
 
-Por padrão, todas as regras são carregadas automaticamente via auto-descoberta do PHPStan. Se preferir ser explícito:
+By default, all rules are loaded automatically via PHPStan's auto-discovery. If you prefer to be explicit:
 
 ```neon
 includes:
     - vendor/cppti/phpstan-rules/rules.neon
 ```
 
-### Regras específicas
+### Specific rules
 
-Para usar apenas algumas regras, inclua os arquivos individuais:
+To use only some rules, include the individual files:
 
 ```neon
 includes:
@@ -63,16 +63,16 @@ includes:
     - vendor/cppti/phpstan-rules/rules/disallow-table-name.neon
 ```
 
-### Arquivos disponíveis
+### Available files
 
-| Arquivo | Descrição |
-|---------|-----------|
-| `rules.neon` | Todas as regras (compatibilidade) |
-| `rules/all.neon` | Todas as regras |
-| `rules/strict-types.neon` | Apenas StrictTypesDeclarationRule |
-| `rules/disallow-table-name.neon` | Apenas DisallowTableNameInValidationRuleRule |
-| `rules/test-namespace.neon` | Apenas TestNamespaceRule |
-| `rules/disallowed.neon` | Apenas regras de chamadas proibidas (spaze/phpstan-disallowed-calls) |
+| File | Description |
+|------|-------------|
+| `rules.neon` | All rules (compatibility) |
+| `rules/all.neon` | All rules |
+| `rules/strict-types.neon` | Only StrictTypesDeclarationRule |
+| `rules/disallow-table-name.neon` | Only DisallowTableNameInValidationRuleRule |
+| `rules/test-namespace.neon` | Only TestNamespaceRule |
+| `rules/disallowed.neon` | Only disallowed calls rules (spaze/phpstan-disallowed-calls) |
 
 ## Rules
 
@@ -120,7 +120,7 @@ includes:
     - vendor/cppti/phpstan-rules/rules/disallow-table-name.neon
 ```
 
-Proíbe o uso de nomes de tabelas como strings diretamente em `Rule::unique()` e `Rule::exists()`. Isso força os desenvolvedores a usar `Model::class`, evitando que nomes de tabelas fiquem espalhados pelo código.
+Disallows the use of table names as strings directly in `Rule::unique()` and `Rule::exists()`. This forces developers to use `Model::class`, preventing table names from being scattered throughout the code.
 
 **Example violation:**
 
@@ -153,7 +153,7 @@ includes:
     - vendor/cppti/phpstan-rules/rules/test-namespace.neon
 ```
 
-Garante que classes de teste (arquivos terminados em `Test.php`) tenham um namespace começando com `Tests\`. Isso mantém a organização e padronização dos testes no projeto.
+Ensures that test classes (files ending in `Test.php`) have a namespace starting with `Tests\`. This maintains organization and standardization of tests in the project.
 
 **Example violation:**
 
@@ -162,7 +162,7 @@ Garante que classes de teste (arquivos terminados em `Test.php`) tenham um names
 
 declare(strict_types=1);
 
-namespace App\Tests; // Errado: não começa com "Tests\"
+namespace App\Tests; // Wrong: does not start with "Tests\"
 
 use PHPUnit\Framework\TestCase;
 
@@ -178,7 +178,7 @@ class ExampleTest extends TestCase
 
 declare(strict_types=1);
 
-namespace Tests\Unit; // Correto: começa com "Tests\"
+namespace Tests\Unit; // Correct: starts with "Tests\"
 
 use PHPUnit\Framework\TestCase;
 
@@ -189,16 +189,16 @@ class ExampleTest extends TestCase
 
 ## Disallowed Calls
 
-Este pacote inclui o [spaze/phpstan-disallowed-calls](https://github.com/spaze/phpstan-disallowed-calls), que permite proibir o uso de funções, métodos, constantes e namespaces específicos.
+This package includes [spaze/phpstan-disallowed-calls](https://github.com/spaze/phpstan-disallowed-calls), which allows you to disallow the use of specific functions, methods, constants, and namespaces.
 
-Para usar apenas esta funcionalidade sem as outras regras:
+To use only this functionality without the other rules:
 
 ```neon
 includes:
     - vendor/cppti/phpstan-rules/rules/disallowed.neon
 ```
 
-As regras de quais chamadas são proibidas devem ser configuradas no projeto que utiliza este pacote. Adicione no seu `phpstan.neon`:
+The rules for which calls are disallowed must be configured in the project using this package. Add to your `phpstan.neon`:
 
 ```neon
 includes:
@@ -208,10 +208,10 @@ parameters:
     disallowedFunctionCalls:
         -
             function: 'dd()'
-            message: 'Use logger ao invés de dd()'
+            message: 'Use logger instead of dd()'
         -
             function: 'dump()'
-            message: 'Remova dump() antes do commit'
+            message: 'Remove dump() before committing'
         -
             function: 'var_dump()'
         -
@@ -224,23 +224,23 @@ parameters:
     disallowedMethodCalls:
         -
             method: 'Illuminate\Support\Facades\Log::debug()'
-            message: 'Não use Log::debug() em produção'
+            message: 'Do not use Log::debug() in production'
 
     disallowedStaticCalls:
         -
             method: 'SomeClass::deprecatedMethod()'
-            message: 'Método depreciado, use newMethod()'
+            message: 'Deprecated method, use newMethod()'
 ```
 
-### Tipos de restrições disponíveis
+### Available restriction types
 
-| Parâmetro | Descrição |
-|-----------|-----------|
-| `disallowedFunctionCalls` | Funções globais (ex: `dd()`, `var_dump()`) |
-| `disallowedMethodCalls` | Métodos de instância |
-| `disallowedStaticCalls` | Chamadas estáticas |
-| `disallowedConstants` | Constantes |
-| `disallowedNamespaces` | Namespaces inteiros |
-| `disallowedSuperglobals` | Superglobais (ex: `$_GET`, `$_POST`) |
+| Parameter | Description |
+|-----------|-------------|
+| `disallowedFunctionCalls` | Global functions (e.g. `dd()`, `var_dump()`) |
+| `disallowedMethodCalls` | Instance methods |
+| `disallowedStaticCalls` | Static calls |
+| `disallowedConstants` | Constants |
+| `disallowedNamespaces` | Entire namespaces |
+| `disallowedSuperglobals` | Superglobals (e.g. `$_GET`, `$_POST`) |
 
-Para mais opções e configurações avançadas, consulte a [documentação do spaze/phpstan-disallowed-calls](https://github.com/spaze/phpstan-disallowed-calls).
+For more options and advanced configuration, see the [spaze/phpstan-disallowed-calls documentation](https://github.com/spaze/phpstan-disallowed-calls).
