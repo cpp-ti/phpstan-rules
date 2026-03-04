@@ -62,6 +62,7 @@ includes:
     - vendor/cppti/phpstan-rules/rules/strict-types.neon
     - vendor/cppti/phpstan-rules/rules/disallow-table-name.neon
     - vendor/cppti/phpstan-rules/rules/disallow-env-usage.neon
+    - vendor/cppti/phpstan-rules/rules/disallow-empty-guarded.neon
 ```
 
 ### Available files
@@ -74,6 +75,7 @@ includes:
 | `rules/disallow-table-name.neon` | Only DisallowTableNameInValidationRuleRule |
 | `rules/test-namespace.neon` | Only TestNamespaceRule |
 | `rules/disallow-env-usage.neon` | Only DisallowEnvUsageRule |
+| `rules/disallow-empty-guarded.neon` | Only DisallowEmptyGuardedRule |
 | `rules/disallowed.neon` | Only disallowed calls rules (spaze/phpstan-disallowed-calls) |
 
 ## Rules
@@ -183,6 +185,37 @@ $apiKey = env('PAYMENT_API_KEY');
 ```php
 // app/Services/PaymentService.php
 $apiKey = config('payment.api_key');
+```
+
+### DisallowEmptyGuardedRule
+
+```neon
+includes:
+    - vendor/cppti/phpstan-rules/rules/disallow-empty-guarded.neon
+```
+
+Disallows setting `$guarded = []` in Eloquent Models. An empty `$guarded` array disables mass-assignment protection entirely, making all attributes mass-assignable and exposing the application to mass-assignment vulnerabilities.
+
+**Example violation:**
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    protected $guarded = [];
+}
+```
+
+**Correct:**
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    protected $fillable = ['name', 'email', 'password'];
+}
 ```
 
 ### TestNamespaceRule
