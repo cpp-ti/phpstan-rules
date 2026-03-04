@@ -3,4 +3,5 @@ includes:
     - disallow-table-name.neon
     - test-namespace.neon
     - disallow-env-usage.neon
+    - disallow-empty-guarded.neon
     - disallowed.neon
