@@ -61,6 +61,7 @@ To use only some rules, include the individual files:
 includes:
     - vendor/cppti/phpstan-rules/rules/strict-types.neon
     - vendor/cppti/phpstan-rules/rules/disallow-table-name.neon
+    - vendor/cppti/phpstan-rules/rules/disallow-env-usage.neon
 ```
 
 ### Available files
@@ -72,6 +73,7 @@ includes:
 | `rules/strict-types.neon` | Only StrictTypesDeclarationRule |
 | `rules/disallow-table-name.neon` | Only DisallowTableNameInValidationRuleRule |
 | `rules/test-namespace.neon` | Only TestNamespaceRule |
+| `rules/disallow-env-usage.neon` | Only DisallowEnvUsageRule |
 | `rules/disallowed.neon` | Only disallowed calls rules (spaze/phpstan-disallowed-calls) |
 
 ## Rules
@@ -144,6 +146,43 @@ $rules = [
     'email' => Rule::unique(User::class),
     'category_id' => Rule::exists(Category::class),
 ];
+```
+
+### DisallowEnvUsageRule
+
+```neon
+includes:
+    - vendor/cppti/phpstan-rules/rules/disallow-env-usage.neon
+```
+
+Disallows the use of `env()` outside of allowed paths. In production with `php artisan config:cache`, calls to `env()` outside of `config/` return `null`, causing silent bugs.
+
+By default, `env()` is only allowed inside files whose path contains `config/`. You can customize the allowed paths:
+
+```neon
+services:
+    -
+        class: Cppti\PHPStanRules\Rules\DisallowEnvUsageRule
+        arguments:
+            allowedPaths:
+                - config/
+                - bootstrap/
+        tags:
+            - phpstan.rules.rule
+```
+
+**Example violation:**
+
+```php
+// app/Services/PaymentService.php
+$apiKey = env('PAYMENT_API_KEY');
+```
+
+**Correct:**
+
+```php
+// app/Services/PaymentService.php
+$apiKey = config('payment.api_key');
 ```
 
 ### TestNamespaceRule

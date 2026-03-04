@@ -2,4 +2,5 @@ includes:
     - strict-types.neon
     - disallow-table-name.neon
     - test-namespace.neon
+    - disallow-env-usage.neon
     - disallowed.neon
