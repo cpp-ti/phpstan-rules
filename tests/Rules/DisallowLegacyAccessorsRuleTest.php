@@ -39,11 +39,6 @@ class DisallowLegacyAccessorsRuleTest extends RuleTestCase
         return new DisallowLegacyAccessorsRule();
     }
 
-    public static function getAdditionalConfigFiles(): array
-    {
-        return [__DIR__ . '/../stubs/eloquent.neon'];
-    }
-
     protected function shouldFailOnPhpErrors(): bool
     {
         return false;
