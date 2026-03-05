@@ -4,4 +4,5 @@ includes:
     - test-namespace.neon
     - disallow-env-usage.neon
     - disallow-empty-guarded.neon
+    - disallow-legacy-accessors.neon
     - disallowed.neon

@@ -70,7 +70,7 @@ class DisallowTableNameInValidationRuleRule implements Rule
                     $tableName,
                     $methodName
                 )
-            )->build(),
+            )->identifier('cppti.disallowTableNameInValidationRule')->build(),
         ];
     }
 }
