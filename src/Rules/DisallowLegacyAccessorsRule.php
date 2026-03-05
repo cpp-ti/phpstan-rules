@@ -55,10 +55,10 @@ class DisallowLegacyAccessorsRule implements Rule
 
         $modelClass = 'Illuminate\Database\Eloquent\Model';
 
-        if (in_array($modelClass, $classReflection->getParentClassesNames(), true)) { // @phpstan-ignore function.impossibleType
+        if (in_array($modelClass, $classReflection->getParentClassesNames(), true)) {
             return true;
         }
 
-        return $classReflection->getName() === $modelClass; // @phpstan-ignore identical.alwaysFalse
+        return $classReflection->getName() === $modelClass;
     }
 }

@@ -1,7 +1,0 @@
-parameters:
-    bootstrapFiles:
-        - /app/tests/stubs/Model.php
-        - /app/tests/stubs/Attribute.php
-    scanFiles:
-        - /app/tests/stubs/Model.php
-        - /app/tests/stubs/Attribute.php

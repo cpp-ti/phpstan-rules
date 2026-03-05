@@ -22,7 +22,8 @@
             "Cppti\\PHPStanRules\\Tests\\": "tests/",
             "App\\Tests\\": "tests/Rules/data/",
             "App\\Services\\": "tests/Rules/data/",
-            "Tests\\": "tests/Rules/data/"
+            "Tests\\": "tests/Rules/data/",
+            "Illuminate\\Database\\Eloquent\\": "tests/stubs/"
         }
     },
     "minimum-stability": "stable",
