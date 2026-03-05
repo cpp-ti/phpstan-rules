@@ -1,0 +1,5 @@
+services:
+    -
+        class: Cppti\PHPStanRules\Rules\DisallowLegacyAccessorsRule
+        tags:
+            - phpstan.rules.rule

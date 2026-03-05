@@ -9,6 +9,9 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 
+/**
+ * @implements Rule<Node\Stmt\Namespace_>
+ */
 class StrictTypesDeclarationRule implements Rule {
 
     public function getNodeType(): string {
@@ -29,6 +32,7 @@ class StrictTypesDeclarationRule implements Rule {
             return [
                 RuleErrorBuilder::message('File is missing declare(strict_types=1) declaration at the beginning.')
                     ->line(1)
+                    ->identifier('cppti.strictTypesDeclaration')
                     ->build()
             ];
         }

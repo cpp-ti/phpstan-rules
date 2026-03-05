@@ -63,6 +63,7 @@ includes:
     - vendor/cppti/phpstan-rules/rules/disallow-table-name.neon
     - vendor/cppti/phpstan-rules/rules/disallow-env-usage.neon
     - vendor/cppti/phpstan-rules/rules/disallow-empty-guarded.neon
+    - vendor/cppti/phpstan-rules/rules/disallow-legacy-accessors.neon
 ```
 
 ### Available files
@@ -76,6 +77,7 @@ includes:
 | `rules/test-namespace.neon` | Only TestNamespaceRule |
 | `rules/disallow-env-usage.neon` | Only DisallowEnvUsageRule |
 | `rules/disallow-empty-guarded.neon` | Only DisallowEmptyGuardedRule |
+| `rules/disallow-legacy-accessors.neon` | Only DisallowLegacyAccessorsRule |
 | `rules/disallowed.neon` | Only disallowed calls rules (spaze/phpstan-disallowed-calls) |
 
 ## Rules
@@ -215,6 +217,52 @@ use Illuminate\Database\Eloquent\Model;
 class User extends Model
 {
     protected $fillable = ['name', 'email', 'password'];
+}
+```
+
+### DisallowLegacyAccessorsRule
+
+```neon
+includes:
+    - vendor/cppti/phpstan-rules/rules/disallow-legacy-accessors.neon
+```
+
+Disallows the use of legacy Laravel accessors (`get*Attribute`) and mutators (`set*Attribute`) in Eloquent Models. These should be replaced with the new `Illuminate\Database\Eloquent\Casts\Attribute` accessor syntax introduced in Laravel 9.
+
+**Example violation:**
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    public function getNameAttribute(string $value): string
+    {
+        return ucfirst($value);
+    }
+
+    public function setNameAttribute(string $value): void
+    {
+        $this->attributes['name'] = strtolower($value);
+    }
+}
+```
+
+**Correct:**
+
+```php
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => ucfirst($value),
+            set: fn (string $value) => strtolower($value),
+        );
+    }
 }
 ```
 
